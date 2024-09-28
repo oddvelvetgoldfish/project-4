@@ -4,6 +4,7 @@
   "description": "Paper Trading Application Backend with TypeScript",
   "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
     "build": "tsc",
     "dev": "nodemon"
   },
