@@ -1,34 +1,33 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import React, { useState } from 'react';
+import InstrumentList from './components/instrument-list';
+import Portfolio from './components/portfolio';
+import TransactionHistory from './components/transaction-history';
+import BuySellForm from './components/buy-sell-form';
+import Chart from './components/chart';
 
-function App() {
-  const [count, setCount] = useState(0);
+const App: React.FC = () => {
+  const [selectedInstrument, setSelectedInstrument] = useState<string>('AAPL');
+
+  const handleInstrumentSelect = (symbol: string) => {
+    setSelectedInstrument(symbol);
+  };
 
   return (
-    <>
-      <div>
-        <a href='https://vitejs.dev' target='_blank'>
-          <img src={viteLogo} className='logo' alt='Vite logo' />
-        </a>
-        <a href='https://react.dev' target='_blank'>
-          <img src={reactLogo} className='logo react' alt='React logo' />
-        </a>
+    <div className='container mx-auto p-4'>
+      <h1 className='text-2xl font-bold mb-4'>Paper Trading Application</h1>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+        <div className='md:col-span-1'>
+          <InstrumentList onSelectInstrument={handleInstrumentSelect} />
+          <Portfolio />
+        </div>
+        <div className='md:col-span-2'>
+          <Chart symbol={selectedInstrument} />
+          <BuySellForm symbol={selectedInstrument} />
+          <TransactionHistory />
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className='card'>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className='read-the-docs'>
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   );
-}
+};
 
 export default App;
