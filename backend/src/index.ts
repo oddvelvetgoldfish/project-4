@@ -135,7 +135,7 @@ app.get('/api/history/:symbol', async (req, res) => {
   };
 
   try {
-    const history = await yahooFinance.historical(symbol, queryOptions);
+    const history = await yahooFinance.chart(symbol, queryOptions);
     res.json(history);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching historical data.' });

@@ -35,7 +35,7 @@ const Chart: React.FC<ChartProps> = ({ symbol }) => {
         const response = await fetch(
           `http://localhost:5001/api/history/${symbol}?period1=2020-01-01&interval=1d`
         ).then((res) => res.json());
-        const prices = response; // Array of price data
+        const prices = response.quotes; // Array of price data
 
         setChartData({
           labels: prices.map((item: any) => new Date(item.date)),

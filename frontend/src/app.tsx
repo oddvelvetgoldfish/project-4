@@ -10,17 +10,18 @@ const App: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [transactions, setTransactions] = useState<any[]>([]);
 
+  const fetchTransactions = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5001/api/transactions'
+      ).then((res) => res.json());
+      setTransactions(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:5001/api/transactions'
-        ).then((res) => res.json());
-        setTransactions(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
     fetchTransactions();
   }, []);
 
@@ -38,7 +39,10 @@ const App: React.FC = () => {
         </div>
         <div className='md:col-span-2'>
           <Chart symbol={selectedInstrument} />
-          <BuySellForm symbol={selectedInstrument} />
+          <BuySellForm
+            symbol={selectedInstrument}
+            refetchTransactions={fetchTransactions}
+          />
           <TransactionHistory transactions={transactions} />
         </div>
       </div>

@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 
 interface BuySellFormProps {
   symbol: string;
+  refetchTransactions: () => void;
 }
 
-const BuySellForm: React.FC<BuySellFormProps> = ({ symbol }) => {
+const BuySellForm: React.FC<BuySellFormProps> = ({
+  symbol,
+  refetchTransactions,
+}) => {
   const [quantity, setQuantity] = useState<number>(0);
   const [price, setPrice] = useState<number | null>(null);
 
@@ -34,6 +38,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({ symbol }) => {
       }).then((res) => res.json());
       alert(`Purchase successful at $${response.price}.`);
       setQuantity(0);
+      refetchTransactions();
     } catch (error: any) {
       alert(error.response.error);
     }
@@ -50,6 +55,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({ symbol }) => {
       }).then((res) => res.json());
       alert(`Sale successful at $${response.price}.`);
       setQuantity(0);
+      refetchTransactions();
     } catch (error: any) {
       alert(error.response.error);
     }
