@@ -1,12 +1,14 @@
 import React from 'react';
 
 interface InstrumentListProps {
+  selectedInstrument: string;
   onSelectInstrument: (symbol: string) => void;
 }
 
 const instruments = ['AAPL', 'GOOGL', 'MSFT', 'BTC-USD'];
 
 const InstrumentList: React.FC<InstrumentListProps> = ({
+  selectedInstrument,
   onSelectInstrument,
 }) => {
   return (
@@ -16,7 +18,9 @@ const InstrumentList: React.FC<InstrumentListProps> = ({
         {instruments.map((symbol) => (
           <li key={symbol}>
             <button
-              className='text-blue-500 hover:underline'
+              className={`text-blue-500 hover:underline ${
+                selectedInstrument === symbol ? 'font-semibold' : ''
+              }`}
               onClick={() => onSelectInstrument(symbol)}
             >
               {symbol}
