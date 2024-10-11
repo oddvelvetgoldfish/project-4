@@ -36,6 +36,10 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
         },
         body: JSON.stringify({ symbol, quantity }),
       }).then((res) => res.json());
+      if (response.error) {
+        alert(response.error);
+        return;
+      }
       alert(`Purchase successful at $${response.price}.`);
       setQuantity(0);
       refetchTransactions();
@@ -53,6 +57,10 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
         },
         body: JSON.stringify({ symbol, quantity }),
       }).then((res) => res.json());
+      if (response.error) {
+        alert(response.error);
+        return;
+      }
       alert(`Sale successful at $${response.price}.`);
       setQuantity(0);
       refetchTransactions();

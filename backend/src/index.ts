@@ -51,6 +51,11 @@ app.post('/api/buy', async (req, res) => {
   };
 
   try {
+    if (!quantity || quantity < 1) {
+      res.status(400).json({ error: 'Invalid quantity.' });
+      return;
+    }
+
     const quote = await yahooFinance.quote(symbol);
     const price = quote.regularMarketPrice!;
 
@@ -82,6 +87,11 @@ app.post('/api/sell', async (req, res) => {
   };
 
   try {
+    if (!quantity || quantity < 1) {
+      res.status(400).json({ error: 'Invalid quantity.' });
+      return;
+    }
+
     const quote = await yahooFinance.quote(symbol);
     const price = quote.regularMarketPrice!;
 
