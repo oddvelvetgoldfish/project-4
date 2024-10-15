@@ -1,4 +1,5 @@
 import React from 'react';
+import PortfolioValueChart from './portfolio-value-chart';
 
 const TransactionHistory: React.FC<{ transactions: any[] }> = ({
   transactions,
@@ -6,6 +7,7 @@ const TransactionHistory: React.FC<{ transactions: any[] }> = ({
   return (
     <div className='mt-4'>
       <h2 className='text-xl font-semibold mb-2'>Transaction History</h2>
+      <PortfolioValueChart />
       <ul className='space-y-1 flex flex-col-reverse'>
         {transactions.map((tx, index) => (
           <li key={index}>
