@@ -5,3 +5,8 @@ export interface Transaction {
   price: number;
   date: string; // ISO string
 }
+
+export interface HoldingsSnapshot {
+  date: Date;
+  holdings: { [symbol: string]: number };
+}
