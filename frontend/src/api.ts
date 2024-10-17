@@ -1,10 +1,17 @@
-import { Account, YahooFinanceQuote } from './types';
+import { Account, Transaction, YahooFinanceQuote } from './types';
 
 export const fetchAccount = async () => {
   const response = await fetch('http://localhost:5001/api/account').then(
     (res) => res.json()
   );
   return response as Account;
+};
+
+export const fetchTransactions = async () => {
+  const response = await fetch('http://localhost:5001/api/transactions').then(
+    (res) => res.json()
+  );
+  return response as Transaction[];
 };
 
 export const fetchSymbolHistoricalPrices = async (

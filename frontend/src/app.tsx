@@ -4,17 +4,16 @@ import Portfolio from './components/portfolio';
 import TransactionHistory from './components/transaction-history';
 import BuySellForm from './components/buy-sell-form';
 import Chart from './components/chart';
+import { fetchTransactions } from './api';
+import { Transaction } from './types';
 
 const App: React.FC = () => {
   const [selectedInstrument, setSelectedInstrument] = useState<string>('AAPL');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-  const fetchTransactions = async () => {
+  const fetchTransactionInfo = async () => {
     try {
-      const response = await fetch(
-        'http://localhost:5001/api/transactions'
-      ).then((res) => res.json());
+      const response = await fetchTransactions();
       setTransactions(response);
     } catch (error) {
       console.error(error);
@@ -22,7 +21,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchTransactions();
+    fetchTransactionInfo();
   }, []);
 
   const handleInstrumentSelect = (symbol: string) => {
@@ -44,7 +43,7 @@ const App: React.FC = () => {
           <Chart symbol={selectedInstrument} />
           <BuySellForm
             symbol={selectedInstrument}
-            refetchTransactions={fetchTransactions}
+            refetchTransactions={fetchTransactionInfo}
           />
           <TransactionHistory transactions={transactions} />
         </div>
