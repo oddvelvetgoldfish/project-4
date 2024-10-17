@@ -349,7 +349,20 @@ app.get('/api/history/:symbol', async (req, res) => {
   const queryOptions = {
     period1: period1 || '2020-01-01',
     period2: period2 || new Date().toISOString().split('T')[0],
-    interval: (interval || '1d') as '1d' | '1wk' | '1mo',
+    interval: (interval || '1d') as
+      | '1m'
+      | '2m'
+      | '5m'
+      | '15m'
+      | '30m'
+      | '60m'
+      | '90m'
+      | '1h'
+      | '1d'
+      | '5d'
+      | '1wk'
+      | '1mo'
+      | '3mo',
   };
 
   try {

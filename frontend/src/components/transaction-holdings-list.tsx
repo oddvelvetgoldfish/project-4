@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HoldingsValueSnapshot, Transaction } from '../types';
-import { buildPortfolioHistory } from '../utils';
+import { buildPortfolioChangeHistory } from '../utils';
 
 const TransactionHoldingsList: React.FC<{ transactions: Transaction[] }> = ({
   transactions,
@@ -10,7 +10,7 @@ const TransactionHoldingsList: React.FC<{ transactions: Transaction[] }> = ({
   >([]);
 
   useEffect(() => {
-    buildPortfolioHistory(transactions).then((res) => {
+    buildPortfolioChangeHistory(transactions).then((res) => {
       setHoldingsHistory(res);
     });
   }, [transactions]);

@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { HoldingsValueSnapshot, Transaction } from '../types';
-import { buildPortfolioHistory } from '../utils';
+import { buildPortfolioChangeHistory } from '../utils';
 
 ChartJS.register(
   CategoryScale,
@@ -36,7 +36,7 @@ const PortfolioValueChart: React.FC<{ transactions: Transaction[] }> = ({
     const fetchPortfolioValues = async () => {
       try {
         // Fetch portfolio history
-        const history = await buildPortfolioHistory(transactions);
+        const history = await buildPortfolioChangeHistory(transactions);
         setPortfolioValues(history);
 
         if (!transactions.length) {

@@ -1,3 +1,4 @@
+import { fetchMultiSymbolHistoricalPrices } from './api';
 import {
   HoldingsSnapshot,
   HoldingsValueSnapshot,
@@ -45,51 +46,38 @@ export const getUniqueSymbols = (transactions: Transaction[]) => {
   return Array.from(symbols);
 };
 
-export const getMultiSymbolHistoricalPrices = async (
-  symbols: string[],
-  startDate: Date,
-  endDate: Date
-) => {
-  const period1 = startDate.toISOString().split('T')[0];
-  const period2 = endDate.toISOString().split('T')[0];
-
-  const historicalPrices: {
-    [symbol: string]: { [dateStr: string]: number };
-  } = {};
-
-  await Promise.all(
-    symbols.map(async (symbol) => {
-      const history = await fetch(
-        `http://localhost:5001/api/history/${symbol}?period1=${period1}&period2=${period2}&interval=1d`
-      ).then((res) => res.json());
-
-      const symbolPrices: { [dateStr: string]: number } = {};
-      for (const quote of history.quotes) {
-        const dateStr = new Date(quote.date).toISOString().split('T')[0];
-        symbolPrices[dateStr] = quote.close;
-      }
-      historicalPrices[symbol] = symbolPrices;
-    })
-  );
-
-  return historicalPrices;
-};
-
 const getPriceAtDate = (
   historicalPrices: { [dateStr: string]: number },
   date: Date
 ) => {
-  const dateStr = date.toISOString().split('T')[0];
-  // find the most recent price on or before the given date
-  let price = historicalPrices[dateStr];
-  while (!price && dateStr !== '1970-01-01') {
-    date.setDate(date.getDate() - 1);
-    price = historicalPrices[date.toISOString().split('T')[0]];
+  const closestDate = closestDateBeforeOrEqual(
+    date,
+    Object.keys(historicalPrices).map((dateStr) => new Date(dateStr))
+  );
+  if (!closestDate) {
+    return undefined;
   }
-  return price;
+  return historicalPrices[closestDate.toISOString()];
 };
+function closestDateBeforeOrEqual(
+  targetDate: Date,
+  rangeDates: Date[]
+): Date | null {
+  // Filter out dates that are greater than the target date
+  const validDates = rangeDates.filter((date) => date <= targetDate);
 
-export const buildPortfolioHistory = async (transactions: Transaction[]) => {
+  // If there are no valid dates, return null
+  if (validDates.length === 0) {
+    return null;
+  }
+
+  // Find the closest date by finding the maximum date in the valid dates
+  return validDates.reduce((prev, curr) => (curr > prev ? curr : prev));
+}
+
+export const buildPortfolioChangeHistory = async (
+  transactions: Transaction[]
+) => {
   // build each holdings snapshot
   const holdingsHistory = buildHoldingsHistory(transactions);
   if (!holdingsHistory.length) {
@@ -98,14 +86,14 @@ export const buildPortfolioHistory = async (transactions: Transaction[]) => {
 
   // get price history for each symbol
   const symbols = getUniqueSymbols(transactions);
-  const startDate = holdingsHistory[0].date;
+  const startDate = new Date(holdingsHistory[0].date.getDate() - 1); // use first date but subtract a day
   const endDate = new Date(); // use current date
-  const historicalPrices = await getMultiSymbolHistoricalPrices(
+  const historicalPrices = await fetchMultiSymbolHistoricalPrices(
     symbols,
     startDate,
-    endDate
+    endDate,
+    '1d'
   );
-  console.log(historicalPrices);
 
   // start building portfolio history
   const portfolioHistory: HoldingsValueSnapshot[] = [];
@@ -142,4 +130,28 @@ export const buildPortfolioHistory = async (transactions: Transaction[]) => {
   });
 
   return portfolioHistory;
+};
+
+export const buildPortfolioValueHistory = async (
+  transactions: Transaction[]
+) => {
+  const holdingsHistory = buildHoldingsHistory(transactions);
+
+  if (!holdingsHistory.length) {
+    return [];
+  }
+
+  return [];
+};
+
+export const compareDates = (d1: string | Date, d2: string | Date) => {
+  let date1 = new Date(d1).getTime();
+  let date2 = new Date(d2).getTime();
+
+  if (date1 < date2) {
+    return -1;
+  } else if (date1 > date2) {
+    return 1;
+  }
+  return 0;
 };
