@@ -6,6 +6,8 @@ import BuySellForm from './components/buy-sell-form';
 import Chart from './components/chart';
 import { fetchTransactions } from './api';
 import { Transaction } from './types';
+import PortfolioValueChart from './components/portfolio-value-chart';
+import TransactionHoldingsList from './components/transaction-holdings-list';
 
 const App: React.FC = () => {
   const [selectedInstrument, setSelectedInstrument] = useState<string>('AAPL');
@@ -45,6 +47,8 @@ const App: React.FC = () => {
             symbol={selectedInstrument}
             refetchTransactions={fetchTransactionInfo}
           />
+          <PortfolioValueChart transactions={transactions} />
+          <TransactionHoldingsList transactions={transactions} />
           <TransactionHistory transactions={transactions} />
         </div>
       </div>

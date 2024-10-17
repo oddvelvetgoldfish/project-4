@@ -31,10 +31,10 @@ export interface Account {
 }
 export interface YahooFinanceQuote {
   date: string; // ISO string
-  high: number | null;
-  low: number | null;
-  open: number | null;
-  close: number | null;
-  volume: number | null;
-  adjclose?: number | null;
+  high: number;
+  low: number;
+  open: number;
+  close: number;
+  volume: number;
+  adjclose?: number;
 }
