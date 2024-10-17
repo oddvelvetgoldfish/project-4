@@ -34,7 +34,7 @@ export const fetchMultiSymbolHistoricalPrices = async (
   endDate: Date,
   interval = '1d'
 ) => {
-  const period1 = startDate.toISOString().split('T')[0];
+  const period1 = new Date(startDate.getDate() - 1).toISOString().split('T')[0];
   const period2 = endDate.toISOString().split('T')[0];
   const intervalStr = `&interval=${interval}`;
 

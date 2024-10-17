@@ -141,17 +141,95 @@ export const buildPortfolioValueHistory = async (
     return [];
   }
 
-  return [];
-};
-
-export const compareDates = (d1: string | Date, d2: string | Date) => {
-  let date1 = new Date(d1).getTime();
-  let date2 = new Date(d2).getTime();
-
-  if (date1 < date2) {
-    return -1;
-  } else if (date1 > date2) {
-    return 1;
+  // ensure there is at least 1 snapshot for each day
+  const startDate = holdingsHistory[0].date;
+  const endDate = new Date();
+  const dateRange = [];
+  for (
+    let date = new Date(startDate);
+    date <= endDate;
+    date.setDate(date.getDate() + 1)
+  ) {
+    dateRange.push(new Date(date));
   }
-  return 0;
+
+  // if there is no snapshot for a day, fill it with the previous snapshot
+  // & add it to the history
+  const filledHistory = [...holdingsHistory];
+  dateRange.forEach((date) => {
+    const dateStr = date.toISOString();
+    if (
+      !filledHistory.find((snapshot) => snapshot.date.toISOString() === dateStr)
+    ) {
+      // find the snapshot with the closest date before the current date
+      const closestDate = closestDateBeforeOrEqual(
+        date,
+        filledHistory.map((snapshot) => snapshot.date)
+      );
+      if (!closestDate) {
+        console.error(`No previous snapshot found for ${dateStr}`);
+        return;
+      }
+      const closestSnapshot = filledHistory.find(
+        (snapshot) => snapshot.date.toISOString() === closestDate.toISOString()
+      );
+      if (!closestSnapshot) {
+        console.error(`No previous snapshot found for ${dateStr}`);
+        return;
+      }
+      filledHistory.push({
+        date,
+        holdings: closestSnapshot.holdings,
+      });
+    }
+  });
+  // sort filled history by date
+  filledHistory.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
+  // get price history for each symbol
+  const symbols = getUniqueSymbols(transactions);
+  const historicalPrices = await fetchMultiSymbolHistoricalPrices(
+    symbols,
+    startDate,
+    endDate,
+    '1d'
+  );
+
+  // start building portfolio history
+  const portfolioHistory: HoldingsValueSnapshot[] = [];
+
+  // build each portfolio snapshot
+  filledHistory.forEach((snapshot) => {
+    const portfolioSnapshot = {
+      date: snapshot.date,
+      holdings: <{ [symbol: string]: HoldingValue }>{},
+      totalValue: 0,
+    };
+
+    Object.keys(snapshot.holdings).forEach((symbol) => {
+      const dateStr = snapshot.date.toISOString();
+      if (historicalPrices[symbol]) {
+        const price = getPriceAtDate(historicalPrices[symbol], snapshot.date);
+        if (price !== undefined) {
+          portfolioSnapshot.holdings[symbol] = {
+            quantity: snapshot.holdings[symbol],
+            price,
+          };
+        } else {
+          console.error(`No price found for ${symbol} on ${dateStr}`);
+        }
+      }
+    });
+
+    // calculate total portfolio value
+    portfolioSnapshot.totalValue = Object.values(
+      portfolioSnapshot.holdings
+    ).reduce((total, { quantity, price }) => total + quantity * price, 0);
+
+    portfolioHistory.push(portfolioSnapshot);
+  });
+
+  return portfolioHistory;
 };
