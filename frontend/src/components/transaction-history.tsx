@@ -1,11 +1,13 @@
 import React from 'react';
 import TransactionHoldingsList from './transaction-holdings-list';
+import PortfolioValueChart from './portfolio-value-chart';
 
 const TransactionHistory: React.FC<{ transactions: any[] }> = ({
   transactions,
 }) => {
   return (
     <div className='mt-4'>
+      <PortfolioValueChart transactions={transactions} />
       <h2 className='text-xl font-semibold mb-2'>Transaction History</h2>
       <TransactionHoldingsList transactions={transactions} />
       <ul className='space-y-1 flex flex-col-reverse'>

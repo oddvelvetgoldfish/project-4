@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { HoldingsSnapshot, Transaction } from '../types';
-import { buildHoldingsHistory } from '../utils';
+import { HoldingsValueSnapshot, Transaction } from '../types';
+import { buildPortfolioHistory } from '../utils';
 
 const TransactionHoldingsList: React.FC<{ transactions: Transaction[] }> = ({
   transactions,
 }) => {
-  const [holdingsHistory, setHoldingsHistory] = useState<HoldingsSnapshot[]>(
-    []
-  );
+  const [holdingsHistory, setHoldingsHistory] = useState<
+    HoldingsValueSnapshot[]
+  >([]);
 
   useEffect(() => {
-    const history = buildHoldingsHistory(transactions);
-    setHoldingsHistory(history);
+    buildPortfolioHistory(transactions).then((res) => {
+      setHoldingsHistory(res);
+    });
   }, [transactions]);
 
   return (
@@ -21,16 +22,18 @@ const TransactionHoldingsList: React.FC<{ transactions: Transaction[] }> = ({
       </h2>
 
       <ul className='space-y-2'>
-        {holdingsHistory.map((item, index) => (
+        {holdingsHistory.map((holdings, index) => (
           <li key={index}>
-            <strong>{item.date.toLocaleString()}</strong>
-            {Object.keys(item.holdings).length > 0 ? (
+            <strong>{holdings.date.toLocaleString()}</strong>
+            {Object.keys(holdings.holdings).length > 0 ? (
               <ul className='ml-4'>
-                {Object.entries(item.holdings).map(([symbol, quantity]) => (
-                  <li key={symbol}>
-                    {symbol}: {quantity} shares
-                  </li>
-                ))}
+                {Object.entries(holdings.holdings).map(
+                  ([symbol, { quantity, price }]) => (
+                    <li key={symbol}>
+                      {symbol}: {quantity} shares at ${price.toFixed(2)}
+                    </li>
+                  )
+                )}
               </ul>
             ) : (
               <p>No holdings.</p>

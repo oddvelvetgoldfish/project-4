@@ -11,6 +11,17 @@ export interface HoldingsSnapshot {
   holdings: { [symbol: string]: number };
 }
 
+export interface HoldingValue {
+  quantity: number;
+  price: number;
+}
+
+export interface HoldingsValueSnapshot {
+  date: Date;
+  holdings: { [symbol: string]: HoldingValue };
+  totalValue: number;
+}
+
 // backend api types
 export interface Account {
   balance: number;
