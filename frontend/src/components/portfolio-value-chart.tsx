@@ -1,5 +1,3 @@
-// components/portfolio-value-chart.tsx
-
 import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import {
@@ -57,25 +55,19 @@ const PortfolioValueChart: React.FC = () => {
           new Set(transactions.map((tx) => tx.symbol))
         );
 
-        // Normalize transaction dates and sort transactions
-        transactions.forEach((tx) => {
-          const txDate = new Date(tx.date);
-          txDate.setHours(0, 0, 0, 0);
-          tx.normalizedDate = txDate;
-        });
+        // Sort transactions by date
         transactions.sort(
-          (a, b) => a.normalizedDate.getTime() - b.normalizedDate.getTime()
+          (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
         );
 
         // Determine date range based on transactions
-        const earliestDate = new Date(transactions[0].normalizedDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
+        const earliestDate = new Date(transactions[0].date);
+        const latestDate = new Date(); // Use current date and time
 
-        // Generate all dates between earliestDate and today
+        // Generate all dates between earliestDate and latestDate
         const dateArray: Date[] = [];
         let currentDate = new Date(earliestDate);
-        while (currentDate <= today) {
+        while (currentDate <= latestDate) {
           dateArray.push(new Date(currentDate));
           currentDate.setDate(currentDate.getDate() + 1);
         }
@@ -88,7 +80,7 @@ const PortfolioValueChart: React.FC = () => {
         await Promise.all(
           symbols.map(async (symbol) => {
             const period1 = earliestDate.toISOString().split('T')[0];
-            const period2 = today.toISOString().split('T')[0];
+            const period2 = latestDate.toISOString().split('T')[0];
 
             const history = await fetch(
               `http://localhost:5001/api/history/${symbol}?period1=${period1}&period2=${period2}&interval=1d`
@@ -109,6 +101,9 @@ const PortfolioValueChart: React.FC = () => {
         const totalTransactions = transactions.length;
         const portfolioValuesArray: { date: Date; value: number }[] = [];
 
+        // Initialize last known prices
+        const lastKnownPrices: { [symbol: string]: number } = {};
+
         // Compute holdings and portfolio value for each date
         for (const date of dateArray) {
           const dateStr = date.toISOString().split('T')[0];
@@ -116,7 +111,7 @@ const PortfolioValueChart: React.FC = () => {
           // Process transactions up to current date
           while (
             transactionIndex < totalTransactions &&
-            transactions[transactionIndex].normalizedDate.getTime() <=
+            new Date(transactions[transactionIndex].date).getTime() <=
               date.getTime()
           ) {
             const tx = transactions[transactionIndex];
@@ -128,11 +123,19 @@ const PortfolioValueChart: React.FC = () => {
             transactionIndex++;
           }
 
+          // Update last known prices
+          for (const symbol of symbols) {
+            const price = historicalPrices[symbol][dateStr];
+            if (price !== undefined) {
+              lastKnownPrices[symbol] = price;
+            }
+          }
+
           // Compute total value
           let totalValue = 0;
           for (const symbol of symbols) {
             const quantity = holdings[symbol] || 0;
-            const price = historicalPrices[symbol][dateStr];
+            const price = lastKnownPrices[symbol];
             if (price !== undefined) {
               totalValue += quantity * price;
             }
@@ -144,8 +147,39 @@ const PortfolioValueChart: React.FC = () => {
           });
         }
 
-        console.log('Portfolio values:', portfolioValuesArray);
+        // Fetch current prices and compute current portfolio value
+        const currentHoldingsSymbols = Object.keys(holdings).filter(
+          (symbol) => holdings[symbol] !== 0
+        );
+
+        const currentPrices: { [symbol: string]: number } = {};
+
+        await Promise.all(
+          currentHoldingsSymbols.map(async (symbol) => {
+            const data = await fetch(
+              `http://localhost:5001/api/price/${symbol}`
+            ).then((res) => res.json());
+            currentPrices[symbol] = data.price;
+          })
+        );
+
+        let currentTotalValue = 0;
+        for (const symbol of currentHoldingsSymbols) {
+          const quantity = holdings[symbol] || 0;
+          const price = currentPrices[symbol];
+          if (price !== undefined) {
+            currentTotalValue += quantity * price;
+          }
+        }
+
+        // Add current portfolio value as the last data point
+        portfolioValuesArray.push({
+          date: latestDate,
+          value: currentTotalValue,
+        });
+
         setPortfolioValues(portfolioValuesArray);
+        console.log('Portfolio values:', portfolioValuesArray);
         setLoading(false);
       } catch (error) {
         console.error('Error calculating portfolio values:', error);
