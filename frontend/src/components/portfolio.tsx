@@ -1,29 +1,28 @@
 import React, { useState, useEffect } from 'react';
+import { fetchAccount } from '../api';
 
 const Portfolio: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [portfolio, setPortfolio] = useState<{ [key: string]: number }>({});
 
-  const fetchAccount = async () => {
+  const fetchAccountData = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/account').then(
-        (res) => res.json()
-      );
-      setBalance(response.balance);
-      setPortfolio(response.portfolio);
+      const account = await fetchAccount();
+      setBalance(account.balance);
+      setPortfolio(account.portfolio);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchAccount();
+    fetchAccountData();
   }, []);
 
   // Update when transactions happen
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchAccount();
+      fetchAccountData();
     }, 5000); // Update every 5 seconds
     return () => clearInterval(interval);
   }, []);

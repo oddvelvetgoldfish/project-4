@@ -40,19 +40,20 @@ export const getUniqueSymbols = (transactions: Transaction[]) => {
   return Array.from(symbols);
 };
 
-export const getSymbolHistoricalPrices = async (
-  symbol: string,
+export const getMultiSymbolHistoricalPrices = async (
+  symbols: string[],
   start: string,
   end?: string
 ) => {
   const startStr = `period1=${start}`;
   const endStr = end ? `&period2=${end}` : '';
   const intervalStr = '&interval=1d';
+  const symbolStr = symbols.map((symbol) => `symbol=${symbol}`).join('&');
   const response = await fetch(
-    `http://localhost:5001/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
+    `http://localhost:5001/api/history?${symbolStr}&${startStr}${endStr}${intervalStr}`
   );
 
   const history = await response.json();
-  console.log(history.quotes);
-  return history.quotes as YahooFinanceQuote[];
+  console.log(history);
+  return history as { [symbol: string]: YahooFinanceQuote[] };
 };

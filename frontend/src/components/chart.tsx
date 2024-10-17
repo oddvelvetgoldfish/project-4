@@ -11,7 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import { getSymbolHistoricalPrices } from '../utils';
+import { fetchSymbolHistoricalPrices } from '../api';
 
 ChartJS.register(
   CategoryScale,
@@ -33,7 +33,7 @@ const Chart: React.FC<ChartProps> = ({ symbol }) => {
   useEffect(() => {
     const fetchPriceData = async () => {
       try {
-        const prices = await getSymbolHistoricalPrices(symbol, '2020-01-01');
+        const prices = await fetchSymbolHistoricalPrices(symbol, '2020-01-01');
 
         setChartData({
           labels: prices.map((quote) => new Date(quote.date)),

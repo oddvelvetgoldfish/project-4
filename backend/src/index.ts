@@ -128,7 +128,8 @@ app.get('/api/account', async (req, res) => {
       portfolio[row.symbol] = row.quantity;
     });
 
-    res.json({ balance: balanceRow.amount, portfolio });
+    const result = { balance: balanceRow.amount, portfolio };
+    res.json(result);
   } catch (error) {
     console.error('Error fetching account data:', error);
     res.status(500).json({ error: 'Failed to fetch account data.' });

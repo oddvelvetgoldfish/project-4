@@ -11,6 +11,13 @@ export interface HoldingsSnapshot {
   holdings: { [symbol: string]: number };
 }
 
+// backend api types
+export interface Account {
+  balance: number;
+  portfolio: {
+    [symbol: string]: number;
+  };
+}
 export interface YahooFinanceQuote {
   date: string; // ISO string
   high: number | null;
