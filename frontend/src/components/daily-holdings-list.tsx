@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-interface Transaction {
-  type: 'buy' | 'sell';
-  symbol: string;
-  quantity: number;
-  price: number;
-  date: string; // ISO string
-}
+import { Transaction } from '../types';
 
 interface DailyHolding {
   date: Date;

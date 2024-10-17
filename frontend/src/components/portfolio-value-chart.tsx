@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { Transaction } from '../types';
 
 ChartJS.register(
   CategoryScale,
@@ -21,14 +22,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-interface Transaction {
-  type: 'buy' | 'sell';
-  symbol: string;
-  quantity: number;
-  price: number;
-  date: string; // ISO string
-}
 
 const PortfolioValueChart: React.FC = () => {
   const [portfolioValues, setPortfolioValues] = useState<
