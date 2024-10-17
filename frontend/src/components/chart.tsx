@@ -11,6 +11,7 @@ import {
   Legend,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { getSymbolHistoricalPrices } from '../utils';
 
 ChartJS.register(
   CategoryScale,
@@ -32,17 +33,14 @@ const Chart: React.FC<ChartProps> = ({ symbol }) => {
   useEffect(() => {
     const fetchPriceData = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5001/api/history/${symbol}?period1=2020-01-01&interval=1d`
-        ).then((res) => res.json());
-        const prices = response.quotes; // Array of price data
+        const prices = await getSymbolHistoricalPrices(symbol, '2020-01-01');
 
         setChartData({
-          labels: prices.map((item: any) => new Date(item.date)),
+          labels: prices.map((quote) => new Date(quote.date)),
           datasets: [
             {
               label: 'Close Price',
-              data: prices.map((item: any) => item.close),
+              data: prices.map((quote) => quote.close),
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.1,
             },

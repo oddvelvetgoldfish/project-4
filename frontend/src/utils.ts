@@ -1,4 +1,4 @@
-import { HoldingsSnapshot, Transaction } from './types';
+import { HoldingsSnapshot, Transaction, YahooFinanceQuote } from './types';
 
 export const buildHoldingsHistory = (transactions: Transaction[]) => {
   // build holdings history
@@ -32,4 +32,27 @@ export const buildHoldingsHistory = (transactions: Transaction[]) => {
   });
 
   return history;
+};
+
+export const getUniqueSymbols = (transactions: Transaction[]) => {
+  const symbols = new Set<string>();
+  transactions.forEach((tx) => symbols.add(tx.symbol));
+  return Array.from(symbols);
+};
+
+export const getSymbolHistoricalPrices = async (
+  symbol: string,
+  start: string,
+  end?: string
+) => {
+  const startStr = `period1=${start}`;
+  const endStr = end ? `&period2=${end}` : '';
+  const intervalStr = '&interval=1d';
+  const response = await fetch(
+    `http://localhost:5001/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
+  );
+
+  const history = await response.json();
+  console.log(history.quotes);
+  return history.quotes as YahooFinanceQuote[];
 };

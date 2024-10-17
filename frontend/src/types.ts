@@ -10,3 +10,13 @@ export interface HoldingsSnapshot {
   date: Date;
   holdings: { [symbol: string]: number };
 }
+
+export interface YahooFinanceQuote {
+  date: string; // ISO string
+  high: number | null;
+  low: number | null;
+  open: number | null;
+  close: number | null;
+  volume: number | null;
+  adjclose?: number | null;
+}
