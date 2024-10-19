@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchCurrentSymbolPrice } from '../api';
 
 interface BuySellFormProps {
   symbol: string;
@@ -15,10 +16,8 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
   useEffect(() => {
     const fetchCurrentPrice = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5001/api/price/${symbol}`
-        ).then((res) => res.json());
-        setPrice(response.price);
+        const response = await fetchCurrentSymbolPrice(symbol);
+        setPrice(response);
       } catch (error) {
         console.error(error);
       }

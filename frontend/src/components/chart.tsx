@@ -28,12 +28,16 @@ interface ChartProps {
 }
 
 const Chart: React.FC<ChartProps> = ({ symbol }) => {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<any>({
+    labels: [],
+    datasets: [],
+  });
 
   useEffect(() => {
     const fetchPriceData = async () => {
       try {
         const prices = await fetchSymbolHistoricalPrices(symbol, '2020-01-01');
+        if (!prices) return;
 
         setChartData({
           labels: prices.map((quote) => new Date(quote.date)),

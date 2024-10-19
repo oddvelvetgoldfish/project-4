@@ -14,6 +14,14 @@ export const fetchTransactions = async () => {
   return response as Transaction[];
 };
 
+export const fetchCurrentSymbolPrice = async (symbol: string) => {
+  const response = await fetch(
+    `http://localhost:5001/api/price/${symbol}`
+  ).then((res) => res.json());
+  if (!response.price) throw new Error('Price not found');
+  return response.price as number;
+};
+
 export const fetchSymbolHistoricalPrices = async (
   symbol: string,
   start: string,
