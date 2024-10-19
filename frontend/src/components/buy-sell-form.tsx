@@ -13,6 +13,14 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
   const [quantity, setQuantity] = useState<number>(0);
   const [price, setPrice] = useState<number | null>(null);
 
+  const updateQuantity = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === '') {
+      setQuantity(0);
+      return;
+    }
+    setQuantity(parseInt(e.target.value));
+  };
+
   useEffect(() => {
     const fetchCurrentPrice = async () => {
       try {
@@ -84,8 +92,9 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
           <label className='block'>Quantity:</label>
           <input
             type='number'
+            min={0}
             value={quantity}
-            onChange={(e) => setQuantity(parseInt(e.target.value))}
+            onChange={updateQuantity}
             className='border p-1 w-full'
           />
         </div>
