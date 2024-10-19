@@ -33,7 +33,7 @@ export const fetchSymbolHistoricalPrices = async (
   const response = await fetch(
     `http://localhost:5001/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
   ).then((res) => res.json());
-  return response.quotes as YahooFinanceQuote[];
+  return response as YahooFinanceQuote[];
 };
 
 export const fetchMultiSymbolHistoricalPrices = async (
@@ -52,14 +52,14 @@ export const fetchMultiSymbolHistoricalPrices = async (
 
   await Promise.all(
     symbols.map(async (symbol) => {
-      const history = await fetch(
+      const history = (await fetch(
         `http://localhost:5001/api/history/${symbol}?period1=${period1}&period2=${period2}${intervalStr}`
-      ).then((res) => res.json());
+      ).then((res) => res.json())) as YahooFinanceQuote[];
 
       const symbolPrices: { [dateStr: string]: number } = {};
-      for (const quote of history.quotes) {
-        const dateStr = new Date(quote.date).toISOString();
-        symbolPrices[dateStr] = quote.close;
+      for (const quote of history) {
+        const dateStr = new Date(quote.Date).toISOString();
+        symbolPrices[dateStr] = quote.Close;
       }
       historicalPrices[symbol] = symbolPrices;
     })

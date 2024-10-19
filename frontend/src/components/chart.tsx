@@ -40,11 +40,11 @@ const Chart: React.FC<ChartProps> = ({ symbol }) => {
         if (!prices) return;
 
         setChartData({
-          labels: prices.map((quote) => new Date(quote.date)),
+          labels: prices.map((quote) => new Date(quote.Date)),
           datasets: [
             {
               label: 'Close Price',
-              data: prices.map((quote) => quote.close),
+              data: prices.map((quote) => quote.Close),
               borderColor: 'rgb(75, 192, 192)',
               tension: 0.1,
             },

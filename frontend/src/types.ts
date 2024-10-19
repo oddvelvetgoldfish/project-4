@@ -30,11 +30,12 @@ export interface Account {
   };
 }
 export interface YahooFinanceQuote {
-  date: string; // ISO string
-  high: number;
-  low: number;
-  open: number;
-  close: number;
-  volume: number;
-  adjclose?: number;
+  Close: number;
+  Date: string; // ISO string
+  Dividends: number;
+  High: number;
+  Low: number;
+  Open: number;
+  'Stock Splits': number;
+  Volume: number;
 }

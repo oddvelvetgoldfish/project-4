@@ -85,9 +85,11 @@ def buy_shares(request):
                 return JsonResponse({"error": "Invalid quantity."}, status=400)
 
             stock = yf.Ticker(symbol)
-            price = stock.info.get("regularMarketPrice")
-            if price is None:
-                return JsonResponse({"error": "Invalid price data."}, status=400)
+            hist = stock.history(period="1d")
+            if hist.empty:
+                return JsonResponse({"error": "No price data available."}, status=400)
+
+            price = hist["Close"].iloc[-1]
 
             cost = price * quantity
 
@@ -101,7 +103,9 @@ def buy_shares(request):
                 balance.save()
 
                 # Update portfolio
-                portfolio_item, created = Portfolio.objects.get_or_create(symbol=symbol)
+                portfolio_item, created = Portfolio.objects.get_or_create(
+                    symbol=symbol, defaults={"quantity": 0}
+                )
                 portfolio_item.quantity += quantity
                 portfolio_item.save()
 
@@ -137,7 +141,11 @@ def sell_shares(request):
                 return JsonResponse({"error": "Invalid quantity."}, status=400)
 
             stock = yf.Ticker(symbol)
-            price = stock.info.get("regularMarketPrice")
+            hist = stock.history(period="1d")
+            if hist.empty:
+                return JsonResponse({"error": "No price data available."}, status=400)
+
+            price = hist["Close"].iloc[-1]
             if price is None:
                 return JsonResponse({"error": "Invalid price data."}, status=400)
 
