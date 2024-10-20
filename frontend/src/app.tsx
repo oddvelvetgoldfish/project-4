@@ -8,6 +8,7 @@ import { fetchTransactions } from './api';
 import { Transaction } from './types';
 import PortfolioValueChart from './components/portfolio-value-chart';
 import TransactionHoldingsList from './components/transaction-holdings-list';
+import Balance from './components/balance';
 
 const App: React.FC = () => {
   const [selectedInstrument, setSelectedInstrument] = useState<string>('AAPL');
@@ -39,6 +40,7 @@ const App: React.FC = () => {
             selectedInstrument={selectedInstrument}
             onSelectInstrument={handleInstrumentSelect}
           />
+          <Balance />
           <Portfolio />
         </div>
         <div className='md:col-span-2'>

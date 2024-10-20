@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { fetchAccount, fetchMultipleSymbolPrices } from '../api';
 
 const Portfolio: React.FC = () => {
-  const [balance, setBalance] = useState<number>(0);
   const [portfolio, setPortfolio] = useState<{ [key: string]: number }>({});
   const [currentPrices, setCurrentPrices] = useState<{ [key: string]: number }>(
     {}
@@ -11,7 +10,6 @@ const Portfolio: React.FC = () => {
   const fetchAccountData = async () => {
     try {
       const account = await fetchAccount();
-      setBalance(account.balance);
       setPortfolio(account.portfolio);
     } catch (error) {
       console.error(error);
@@ -46,7 +44,16 @@ const Portfolio: React.FC = () => {
   return (
     <div className='mt-4'>
       <h2 className='text-xl font-semibold mb-2'>Portfolio</h2>
-      <p className='font-medium mb-1'>Balance: ${balance.toFixed(2)}</p>
+      <p className='font-medium mb-1'>
+        Total Value: $
+        {Object.entries(portfolio)
+          .reduce(
+            (total, [symbol, quantity]) =>
+              total + (currentPrices[symbol] || 0) * quantity,
+            0
+          )
+          .toFixed(2)}
+      </p>
       <ul className='space-y-1'>
         {Object.entries(portfolio).map(([symbol, quantity]) => (
           <li key={symbol}>
