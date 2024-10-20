@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAccount, fetchMultipleSymbolPrices } from '../api';
+import { fetchAccount } from '../api';
 
 const Balance: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
