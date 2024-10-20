@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAccount } from '../api';
+import { Transaction } from '../types';
 
-const Balance: React.FC = () => {
+const Balance: React.FC<{ transactions: Transaction[] }> = ({
+  transactions,
+}) => {
   const [balance, setBalance] = useState<number>(0);
 
   const fetchAccountData = async () => {
@@ -15,15 +18,7 @@ const Balance: React.FC = () => {
 
   useEffect(() => {
     fetchAccountData();
-  }, []);
-
-  // Update when transactions happen
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchAccountData();
-    }, 5000); // Update every 5 seconds
-    return () => clearInterval(interval);
-  }, []);
+  }, [transactions]);
 
   return (
     <div className='mt-4'>

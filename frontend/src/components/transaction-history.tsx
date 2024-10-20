@@ -1,6 +1,7 @@
 import React from 'react';
+import { Transaction } from '../types';
 
-const TransactionHistory: React.FC<{ transactions: any[] }> = ({
+const TransactionHistory: React.FC<{ transactions: Transaction[] }> = ({
   transactions,
 }) => {
   return (

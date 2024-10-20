@@ -41,8 +41,8 @@ const App: React.FC = () => {
             selectedInstrument={selectedInstrument}
             onSelectInstrument={handleInstrumentSelect}
           />
-          <Balance />
-          <Portfolio />
+          <Balance transactions={transactions} />
+          <Portfolio transactions={transactions} />
           <ResetButton />
         </div>
         <div className='md:col-span-2'>
