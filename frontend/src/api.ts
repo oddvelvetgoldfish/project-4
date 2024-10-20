@@ -22,6 +22,14 @@ export const fetchCurrentSymbolPrice = async (symbol: string) => {
   return response.price as number;
 };
 
+export const fetchMultipleSymbolPrices = async (symbols: string[]) => {
+  // fetch in parallel
+  const prices = await Promise.all(
+    symbols.map((symbol) => fetchCurrentSymbolPrice(symbol))
+  );
+  return Object.fromEntries(symbols.map((symbol, i) => [symbol, prices[i]]));
+};
+
 export const fetchSymbolHistoricalPrices = async (
   symbol: string,
   start: string,

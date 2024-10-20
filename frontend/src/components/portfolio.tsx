@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAccount } from '../api';
+import { fetchAccount, fetchMultipleSymbolPrices } from '../api';
 
 const Portfolio: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [portfolio, setPortfolio] = useState<{ [key: string]: number }>({});
+  const [currentPrices, setCurrentPrices] = useState<{ [key: string]: number }>(
+    {}
+  );
 
   const fetchAccountData = async () => {
     try {
@@ -15,9 +18,22 @@ const Portfolio: React.FC = () => {
     }
   };
 
+  const fetchCurrentPrices = async () => {
+    try {
+      const prices = await fetchMultipleSymbolPrices(Object.keys(portfolio));
+      setCurrentPrices(prices);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     fetchAccountData();
   }, []);
+
+  useEffect(() => {
+    fetchCurrentPrices();
+  }, [portfolio]);
 
   // Update when transactions happen
   useEffect(() => {
@@ -30,11 +46,11 @@ const Portfolio: React.FC = () => {
   return (
     <div className='mt-4'>
       <h2 className='text-xl font-semibold mb-2'>Portfolio</h2>
-      <p>Balance: ${balance.toFixed(2)}</p>
+      <p className='font-medium mb-1'>Balance: ${balance.toFixed(2)}</p>
       <ul className='space-y-1'>
         {Object.entries(portfolio).map(([symbol, quantity]) => (
           <li key={symbol}>
-            {symbol}: {quantity} shares
+            {symbol}: {quantity} shares @ ${currentPrices[symbol]?.toFixed(2)}
           </li>
         ))}
       </ul>
