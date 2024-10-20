@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Balance(models.Model):
@@ -20,4 +21,4 @@ class Transaction(models.Model):
     symbol = models.CharField(max_length=10)
     price = models.FloatField()
     quantity = models.IntegerField()
-    date = models.DateTimeField(auto_now_add=True)
+    date = models.DateTimeField(default=timezone.now)

@@ -115,7 +115,6 @@ def buy_shares(request):
                     symbol=symbol,
                     price=price,
                     quantity=quantity,
-                    date=timezone.now(),
                 )
 
             return JsonResponse({"message": "Purchase successful.", "price": price})
@@ -174,7 +173,6 @@ def sell_shares(request):
                     symbol=symbol,
                     price=price,
                     quantity=quantity,
-                    date=timezone.now(),
                 )
 
             return JsonResponse({"message": "Sale successful.", "price": price})
