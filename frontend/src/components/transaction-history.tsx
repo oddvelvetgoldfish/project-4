@@ -10,7 +10,7 @@ const TransactionHistory: React.FC<{ transactions: any[] }> = ({
         {transactions.map((tx, index) => (
           <li key={index}>
             {new Date(tx.date).toLocaleString()}: {tx.type.toUpperCase()}{' '}
-            {tx.quantity} shares of {tx.symbol} at ${tx.price}
+            {tx.quantity} shares of {tx.symbol} at ${tx.price.toFixed(2)}
           </li>
         ))}
       </ul>

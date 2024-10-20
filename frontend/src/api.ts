@@ -75,3 +75,14 @@ export const fetchMultiSymbolHistoricalPrices = async (
 
   return historicalPrices;
 };
+
+export const resetAccount = async () => {
+  const response = await fetch('http://localhost:5001/api/reset', {
+    method: 'POST',
+  });
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to reset account');
+  }
+  return response.json();
+};

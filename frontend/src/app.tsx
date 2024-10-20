@@ -9,6 +9,7 @@ import { Transaction } from './types';
 import PortfolioValueChart from './components/portfolio-value-chart';
 import TransactionHoldingsList from './components/transaction-holdings-list';
 import Balance from './components/balance';
+import ResetButton from './components/reset-button';
 
 const App: React.FC = () => {
   const [selectedInstrument, setSelectedInstrument] = useState<string>('AAPL');
@@ -42,6 +43,7 @@ const App: React.FC = () => {
           />
           <Balance />
           <Portfolio />
+          <ResetButton />
         </div>
         <div className='md:col-span-2'>
           <Chart symbol={selectedInstrument} />
