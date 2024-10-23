@@ -4,29 +4,29 @@ import { Account, Transaction, YahooFinanceQuote } from './types';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const fetchAccount = async () => {
-  const response = await fetch('http://localhost:8000/api/account').then(
-    (res) => res.json()
+  const response = await fetch(`${API_BASE_URL}/api/account`).then((res) =>
+    res.json()
   );
   return response as Account;
 };
 
 export const fetchTransactions = async () => {
-  const response = await fetch('http://localhost:8000/api/transactions').then(
-    (res) => res.json()
+  const response = await fetch(`${API_BASE_URL}/api/transactions`).then((res) =>
+    res.json()
   );
   return response as Transaction[];
 };
 
 export const fetchCurrentSymbolPrice = async (symbol: string) => {
-  const response = await fetch(
-    `http://localhost:8000/api/price/${symbol}`
-  ).then((res) => res.json());
+  const response = await fetch(`${API_BASE_URL}/api/price/${symbol}`).then(
+    (res) => res.json()
+  );
   if (!response.price) throw new Error('Price not found');
   return response.price as number;
 };
 
 export const fetchMultipleSymbolPrices = async (symbols: string[]) => {
-  // fetch in parallel
+  // Fetch in parallel
   const prices = await Promise.all(
     symbols.map((symbol) => fetchCurrentSymbolPrice(symbol))
   );
@@ -42,7 +42,7 @@ export const fetchSymbolHistoricalPrices = async (
   const endStr = end ? `&period2=${end}` : '';
   const intervalStr = '&interval=1d';
   const response = await fetch(
-    `http://localhost:8000/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
+    `${API_BASE_URL}/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
   ).then((res) => res.json());
   return response as YahooFinanceQuote[];
 };
@@ -64,7 +64,7 @@ export const fetchMultiSymbolHistoricalPrices = async (
   await Promise.all(
     symbols.map(async (symbol) => {
       const history = (await fetch(
-        `http://localhost:8000/api/history/${symbol}?period1=${period1}&period2=${period2}${intervalStr}`
+        `${API_BASE_URL}/api/history/${symbol}?period1=${period1}&period2=${period2}${intervalStr}`
       ).then((res) => res.json())) as YahooFinanceQuote[];
 
       const symbolPrices: { [dateStr: string]: number } = {};
@@ -80,7 +80,7 @@ export const fetchMultiSymbolHistoricalPrices = async (
 };
 
 export const resetAccount = async () => {
-  const response = await fetch('http://localhost:8000/api/reset', {
+  const response = await fetch(`${API_BASE_URL}/api/reset`, {
     method: 'POST',
   });
   if (!response.ok) {
@@ -91,7 +91,7 @@ export const resetAccount = async () => {
 };
 
 export const buyStock = async (symbol: string, quantity: number) => {
-  const response = await fetch('http://localhost:8000/api/buy', {
+  const response = await fetch(`${API_BASE_URL}/api/buy`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export const buyStock = async (symbol: string, quantity: number) => {
 };
 
 export const sellStock = async (symbol: string, quantity: number) => {
-  const response = await fetch('http://localhost:8000/api/sell', {
+  const response = await fetch(`${API_BASE_URL}/api/sell`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

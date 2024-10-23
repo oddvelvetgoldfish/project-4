@@ -192,7 +192,7 @@ export const buildPortfolioValueHistory = async (
   const symbols = getUniqueSymbols(transactions);
   const historicalPrices = await fetchMultiSymbolHistoricalPrices(
     symbols,
-    startDate,
+    new Date(startDate.getDate() - 7), // use first date but subtract a week to ensure we have prices
     endDate,
     '1d'
   );
