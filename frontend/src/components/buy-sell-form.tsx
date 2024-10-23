@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchCurrentSymbolPrice } from '../api';
+import { buyStock, fetchCurrentSymbolPrice, sellStock } from '../api';
 
 interface BuySellFormProps {
   symbol: string;
@@ -36,13 +36,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
 
   const handleBuy = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/buy', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ symbol, quantity }),
-      }).then((res) => res.json());
+      const response = await buyStock(symbol, quantity);
       if (response.error) {
         alert(response.error);
         return;
@@ -57,13 +51,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
 
   const handleSell = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/sell', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ symbol, quantity }),
-      }).then((res) => res.json());
+      const response = await sellStock(symbol, quantity);
       if (response.error) {
         alert(response.error);
         return;

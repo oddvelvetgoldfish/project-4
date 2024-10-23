@@ -1,5 +1,8 @@
 import { Account, Transaction, YahooFinanceQuote } from './types';
 
+// Get the API base URL from environment variables, default to empty string
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 export const fetchAccount = async () => {
   const response = await fetch('http://localhost:8000/api/account').then(
     (res) => res.json()
@@ -85,4 +88,32 @@ export const resetAccount = async () => {
     throw new Error(errorData.error || 'Failed to reset account');
   }
   return response.json();
+};
+
+export const buyStock = async (symbol: string, quantity: number) => {
+  const response = await fetch('http://localhost:8000/api/buy', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ symbol, quantity }),
+  }).then((res) => res.json());
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response;
+};
+
+export const sellStock = async (symbol: string, quantity: number) => {
+  const response = await fetch('http://localhost:8000/api/sell', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ symbol, quantity }),
+  }).then((res) => res.json());
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response;
 };

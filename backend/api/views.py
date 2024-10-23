@@ -1,12 +1,11 @@
 import json
-from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Balance, Portfolio, Transaction
 from django.db import transaction as db_transaction
 import yfinance as yf
-from django.utils import timezone
 from datetime import datetime
+from django.views.generic import TemplateView
 
 
 # Endpoint to reset account
@@ -226,3 +225,8 @@ def get_history(request, symbol):
             )
     else:
         return JsonResponse({"error": "Invalid request method."}, status=405)
+
+
+# Frontend view to serve React app
+class FrontendAppView(TemplateView):
+    template_name = "index.html"
