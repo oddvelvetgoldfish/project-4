@@ -1,14 +1,14 @@
 import { Account, Transaction, YahooFinanceQuote } from './types';
 
 export const fetchAccount = async () => {
-  const response = await fetch('http://localhost:5001/api/account').then(
+  const response = await fetch('http://localhost:8000/api/account').then(
     (res) => res.json()
   );
   return response as Account;
 };
 
 export const fetchTransactions = async () => {
-  const response = await fetch('http://localhost:5001/api/transactions').then(
+  const response = await fetch('http://localhost:8000/api/transactions').then(
     (res) => res.json()
   );
   return response as Transaction[];
@@ -16,7 +16,7 @@ export const fetchTransactions = async () => {
 
 export const fetchCurrentSymbolPrice = async (symbol: string) => {
   const response = await fetch(
-    `http://localhost:5001/api/price/${symbol}`
+    `http://localhost:8000/api/price/${symbol}`
   ).then((res) => res.json());
   if (!response.price) throw new Error('Price not found');
   return response.price as number;
@@ -39,7 +39,7 @@ export const fetchSymbolHistoricalPrices = async (
   const endStr = end ? `&period2=${end}` : '';
   const intervalStr = '&interval=1d';
   const response = await fetch(
-    `http://localhost:5001/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
+    `http://localhost:8000/api/history/${symbol}?${startStr}${endStr}${intervalStr}`
   ).then((res) => res.json());
   return response as YahooFinanceQuote[];
 };
@@ -61,7 +61,7 @@ export const fetchMultiSymbolHistoricalPrices = async (
   await Promise.all(
     symbols.map(async (symbol) => {
       const history = (await fetch(
-        `http://localhost:5001/api/history/${symbol}?period1=${period1}&period2=${period2}${intervalStr}`
+        `http://localhost:8000/api/history/${symbol}?period1=${period1}&period2=${period2}${intervalStr}`
       ).then((res) => res.json())) as YahooFinanceQuote[];
 
       const symbolPrices: { [dateStr: string]: number } = {};
@@ -77,7 +77,7 @@ export const fetchMultiSymbolHistoricalPrices = async (
 };
 
 export const resetAccount = async () => {
-  const response = await fetch('http://localhost:5001/api/reset', {
+  const response = await fetch('http://localhost:8000/api/reset', {
     method: 'POST',
   });
   if (!response.ok) {

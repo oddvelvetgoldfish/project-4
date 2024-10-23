@@ -36,7 +36,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
 
   const handleBuy = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/buy', {
+      const response = await fetch('http://localhost:8000/api/buy', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ const BuySellForm: React.FC<BuySellFormProps> = ({
 
   const handleSell = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/sell', {
+      const response = await fetch('http://localhost:8000/api/sell', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
