@@ -1,0 +1,9 @@
+# Ignore node_modules in frontend
+frontend/node_modules
+
+# Ignore Python virtual environments, if applicable
+backend/venv
+
+# Ignore other potentially large or unnecessary files
+*.log
+__pycache__

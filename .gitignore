@@ -1,7 +1,5 @@
 aggregate-code.cjs
 backend-code.txt
-Dockerfile
-.dockerignore
 package.json
 pnpm-lock.yaml
 node_modules
