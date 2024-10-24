@@ -6,6 +6,8 @@
 
 Welcome to my project! This is a simple Django REST API backend with a React frontend for a stock trading application.
 
+![screenshot](./screenshot.png)
+
 ## Features
 
 - Django backend with Django REST Framework
