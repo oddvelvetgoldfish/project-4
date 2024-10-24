@@ -10,6 +10,9 @@ RUN pip install -r requirements.txt
 # Copy the rest of the backend files
 COPY ./backend ./
 
+# Run the backend migrations
+RUN python manage.py migrate
+
 # Expose ports for both the frontend (3000) and backend (8000)
 EXPOSE 8000
 
